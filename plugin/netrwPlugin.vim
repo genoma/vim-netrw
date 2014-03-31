@@ -20,7 +20,7 @@
 if &cp || exists("g:loaded_netrwPlugin")
  finish
 endif
-let g:loaded_netrwPlugin = "v151k"
+let g:loaded_netrwPlugin = "v151"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** you need vim version 7.2 for this version of netrw"
@@ -127,7 +127,6 @@ fun! s:LocalBrowse(dirname)
   elseif isdirectory(a:dirname)
 "   call Decho("(LocalBrowse) dirname<".a:dirname."> ft=".&ft."  (isdirectory, not amiga)")
 "   call Dredir("LocalBrowse ft last set: ","verbose set ft")
-"   call Decho("COMBAK#00A: win#".winnr()." w:netrw_prvfile<".(exists("w:netrw_prvfile")? w:netrw_prvfile : 'n/a')."> ft=".&ft)
    sil! call netrw#LocalBrowseCheck(a:dirname)
    if exists("w:netrw_bannercnt")
     exe w:netrw_bannercnt

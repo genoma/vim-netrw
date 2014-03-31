@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Mar 17
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Mar 20
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -2568,8 +2568,27 @@ your browsing preferences.  (see also: |netrw-settings|)
 				one may put lines like >
 					hi link netrwCompress Visual
 <				into one's <.vimrc> to use one's own
-				preferences.
+				preferences.  Alternatively, one may
+				put such specifications into
+				.vim/after/syntax/netrw.vim.
 
+				As an example, I myself use a dark-background
+				colorscheme with the following in
+				.vim/after/syntax/netrw.vim: >
+
+ hi netrwCompress term=NONE cterm=NONE gui=NONE ctermfg=10 guifg=green  ctermbg=0 guibg=black
+ hi netrwData	  term=NONE cterm=NONE gui=NONE ctermfg=9 guifg=blue ctermbg=0 guibg=black
+ hi netrwHdr	  term=NONE cterm=NONE,italic gui=NONE guifg=SeaGreen1
+ hi netrwLex	  term=NONE cterm=NONE,italic gui=NONE guifg=SeaGreen1
+ hi netrwYacc	  term=NONE cterm=NONE,italic gui=NONE guifg=SeaGreen1
+ hi netrwLib	  term=NONE cterm=NONE gui=NONE ctermfg=14 guifg=yellow
+ hi netrwObj	  term=NONE cterm=NONE gui=NONE ctermfg=12 guifg=red
+ hi netrwTilde	  term=NONE cterm=NONE gui=NONE ctermfg=12 guifg=red
+ hi netrwTmp	  term=NONE cterm=NONE gui=NONE ctermfg=12 guifg=red
+ hi netrwTags	  term=NONE cterm=NONE gui=NONE ctermfg=12 guifg=red
+ hi netrwDoc	  term=NONE cterm=NONE gui=NONE ctermfg=220 ctermbg=27 guifg=yellow2 guibg=Blue3
+ hi netrwSymLink  term=NONE cterm=NONE gui=NONE ctermfg=220 ctermbg=27 guifg=grey60
+<
   *g:netrw_ssh_browse_reject*	ssh can sometimes produce unwanted lines,
 				messages, banners, and whatnot that one doesn't
 				want masquerading as "directories" and "files".
@@ -3194,6 +3213,17 @@ which is loaded automatically at startup (assuming :set nocp).
 		Mar 14, 2014	* Implemented :MF and :MT (see |netrw-:MF|
 				  and |netrw-:MT|, respectively)
 		Mar 17, 2014	* |:Ntree| [dir] wasn't working properly; fixed
+		Mar 18, 2014	* Changed all uses of set to setl
+		Mar 18, 2014	* Commented the netrw_btkeep line in
+				  s:NetrwOptionSave(); the effect is that
+				  netrw buffers will remain as |'bt'|=nofile.
+				  This should prevent swapfiles being created
+				  for netrw buffers.
+		Mar 20, 2014	* Changed all uses of lcd to use s:NetrwLcd()
+				  instead.  Consistent error handling results
+				  and it also handles Window's shares
+				* Fixed |netrw-d| command when applied with ftp
+				* https: support included for netrw#NetRead()
 	v150:	Jul 12, 2013	* removed a "keepalt" to allow ":e #" to
 				  return to the netrw directory listing
 		Jul 13, 2013	* (Jonas Diemer) suggested changing
