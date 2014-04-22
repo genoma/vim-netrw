@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Mar 20
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Apr 21
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -348,9 +348,9 @@ settings are described below, in |netrw-browser-options|, and in
  *g:netrw_bufsettings*	the settings that netrw buffers have
  			(default) noma nomod nonu nowrap ro nobl
 
- *g:netrw_chgwin*	specifies a window number where file edits will take
-			place.  (also see |netrw-C|)
-			(default) not defined
+ *g:netrw_chgwin*	specifies a window number where subsequent file edits
+			will take place.  (also see |netrw-C|)
+			(default) -1
 
  *g:Netrw_funcref*	specifies a function (or functions) to be called when
 			netrw edits a file.  The file is first edited, and
@@ -1919,19 +1919,21 @@ MARKING FILES					*netrw-:MF*	*netrw-mf* {{{2
 Netrw has several ways of marking files:
 
 	* One may mark files with the cursor atop a filename and
-	then pressing "mf".
+	  then pressing "mf".
 
 	* With gvim, in addition one may mark files with
-	<s-leftmouse>.
+	  <s-leftmouse>. (see |netrw-mouse|)
 
 	* One may use the :MF command, which takes a list of
-	files (for local directories, the list may include
-	wildcards -- see |glob()|) >
+	  files (for local directories, the list may include
+	  wildcards -- see |glob()|) >
 
 		:MF *.c
 <
 	* Note that :MF uses |<f-args>| to break the line
-	at spaces.
+	  at spaces.
+
+	* Mark files based upon the quickfix list (|netrw-qF|)
 
 The following netrw maps make use of marked files:
 
@@ -1948,7 +1950,6 @@ The following netrw maps make use of marked files:
     |netrw-mT|	Generate tags using marked files
     |netrw-mx|	Apply shell command to marked files
     |netrw-mz|	Compress/Decompress marked files
-    |netrw-qF|	Mark files using quickfix list
     |netrw-O|	Obtain marked files
     |netrw-R|	Rename marked files
 
@@ -2373,6 +2374,11 @@ your browsing preferences.  (see also: |netrw-settings|)
 				trading off accuracy (ie. up-to-date listing)
 				versus speed.
 
+  *g:netrw_ffkeep*		(default: doesn't exist)
+  				If this variable exists and is zero, then
+				netrw will not do a save and restore for
+				|'fileformat'|.
+
   *g:netrw_fname_escape*	=' ?&;%'
 				Used on filenames before remote reading/writing
 
@@ -2634,6 +2640,9 @@ your browsing preferences.  (see also: |netrw-settings|)
 				 If g:netrw_winsize is less than zero, then
 				the absolute value of g:netrw_winsize lines
 				or columns will be used for the new window.
+				 If g:netrw_winsize is zero, then a normal
+				split will be made (ie. |'equalalways'| will
+				take effect, for example).
 				 default: 50  (for 50%)
 
   *g:netrw_xstrlen*		Controls how netrw computes string lengths,
@@ -2829,6 +2838,15 @@ SETTING EDITING WINDOW					*netrw-C* {{{2
 One may select a netrw window for editing with the "C" mapping, or by setting
 g:netrw_chgwin to the selected window number.  Subsequent selection of a file
 to edit (|netrw-cr|) will use that window.
+
+	* C  by itself, will select the current window for editing via
+	  |netrw-cr|
+
+	* [count]C the count will be used as the window number to be used
+	  for editing via |netrw-cr|.
+Using >
+	let g:netrw_chgwin= -1
+will restore the default editing behavior (ie. use the current window).
 
 Related topics:			|netrw-cr| |g:netrw_browse_split|
 Associated setting variables:	|g:netrw_chgwin|
@@ -3118,6 +3136,15 @@ Associated setting variables:	|g:netrw_chgwin|
 	     all netrw's mouse mappings, not just the <leftmouse> one.
 	     (see |g:netrw_mousemaps|)
 
+								*netrw-p16*
+	P16. When editing remote files (ex. :e ftp://hostname/path/file),
+	     under Windows I get an |E303| message complaining that its unable
+	     to open a swap file.
+
+	     (romainl) It looks like you are starting Vim from a protected
+	     directory.  Start if from your $HOME or another writable
+	     directory.
+
 ==============================================================================
 11. Debugging Netrw Itself				*netrw-debug* {{{1
 
@@ -3177,6 +3204,30 @@ which is loaded automatically at startup (assuming :set nocp).
 ==============================================================================
 12. History						*netrw-history* {{{1
 
+	v152:	Apr 08, 2014   	* uses the |'noswapfile'| option (requires
+				  vim 7.4 with patch 213)
+				* (Enno Nagel) turn |'rnu'| off in netrw
+				  buffers.
+				* (Quinn Strahl) suggested that netrw
+				  allow regular window splitting to occur,
+				  thereby allowing |'equalalways'| to take
+				  effect.
+				* (qingtian zhao) normally, netrw will
+				  save and restore the |'fileformat'|;
+				  however, sometimes that isn't wanted
+		Apr 14, 2014	* whenever netrw marks a buffer as ro,
+				  it will also mark it as nomod.
+		Apr 16, 2014	* sftp protocol now supported by
+				  netrw#Obtain(); this means that one
+				  may use "mc" to copy a remote file
+				  to a local file using sftp, and that
+				  the |netrw-O| command can obtain remote
+				  files via sftp.
+				* added [count]C support (see |netrw-C|)
+		Apr 18, 2014	* when |g:netrw_chgwin| is one more than
+				  the last window, then vertically split
+				  the last window and use it as the
+				  chgwin window.
 	v151:	Jan 22, 2014	* extended :Rexplore to return to buffer
 				  prior to Explore or editing a directory
 				* (Ken Takata) netrw gave error when
