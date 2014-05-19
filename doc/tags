@@ -89,6 +89,7 @@ g:netrw_rsync_cmd	pi_netrw.txt	/*g:netrw_rsync_cmd*
 g:netrw_scp_cmd	pi_netrw.txt	/*g:netrw_scp_cmd*
 g:netrw_scpport	pi_netrw.txt	/*g:netrw_scpport*
 g:netrw_sepchr	pi_netrw.txt	/*g:netrw_sepchr*
+g:netrw_servername	pi_netrw.txt	/*g:netrw_servername*
 g:netrw_sftp_cmd	pi_netrw.txt	/*g:netrw_sftp_cmd*
 g:netrw_silent	pi_netrw.txt	/*g:netrw_silent*
 g:netrw_sort_by	pi_netrw.txt	/*g:netrw_sort_by*
@@ -121,6 +122,7 @@ netrw-:Hexplore	pi_netrw.txt	/*netrw-:Hexplore*
 netrw-:Lexplore	pi_netrw.txt	/*netrw-:Lexplore*
 netrw-:MF	pi_netrw.txt	/*netrw-:MF*
 netrw-:MT	pi_netrw.txt	/*netrw-:MT*
+netrw-:NetrwMB	pi_netrw.txt	/*netrw-:NetrwMB*
 netrw-:Rexplore	pi_netrw.txt	/*netrw-:Rexplore*
 netrw-:Sexplore	pi_netrw.txt	/*netrw-:Sexplore*
 netrw-:Texplore	pi_netrw.txt	/*netrw-:Texplore*
@@ -158,6 +160,7 @@ netrw-createfile	pi_netrw.txt	/*netrw-createfile*
 netrw-credits	pi_netrw.txt	/*netrw-credits*
 netrw-ctrl-h	pi_netrw.txt	/*netrw-ctrl-h*
 netrw-ctrl-l	pi_netrw.txt	/*netrw-ctrl-l*
+netrw-ctrl-r	pi_netrw.txt	/*netrw-ctrl-r*
 netrw-ctrl_l	pi_netrw.txt	/*netrw-ctrl_l*
 netrw-curdir	pi_netrw.txt	/*netrw-curdir*
 netrw-d	pi_netrw.txt	/*netrw-d*
