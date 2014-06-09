@@ -1,7 +1,7 @@
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Jun 01, 2014
-" Version:	153g	ASTRO-ONLY
+" Date:		Jun 05, 2014
+" Version:	153h	ASTRO-ONLY
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -29,7 +29,7 @@ if v:version < 704 || !has("patch213")
  let s:needpatch213= 1
  finish
 endif
-let g:loaded_netrw = "v153g"
+let g:loaded_netrw = "v153h"
 if !exists("s:NOTE")
  let s:NOTE    = 0
  let s:WARNING = 1
@@ -4424,8 +4424,9 @@ fun! s:NetrwBrowseChgDir(islocal,newdir,...)
    let dirname= dirname.'/'
 "   call Decho("adjusting dirname<".dirname.">")
   endif
+"  call Decho("newdir<".newdir."> !~ dirpat<".dirpat.">? ".((newdir !~ dirpat)? "yes" : "no"))
 
-  if newdir !~ dirpat
+  if newdir !~ dirpat && !(a:islocal && isdirectory(newdir))
    " ------------------------------
    " NetrwBrowseChgDir: edit a file {{{3
    " ------------------------------
@@ -4441,7 +4442,7 @@ fun! s:NetrwBrowseChgDir(islocal,newdir,...)
    if exists("w:netrw_liststyle") && w:netrw_liststyle == s:TREELIST && exists("w:netrw_treedict") && newdir !~ '^\(/\|\a:\)'
 "    call Decho("edit-a-file: handle tree listing: w:netrw_treedict<".(exists("w:netrw_treedict")? string(w:netrw_treedict) : 'n/a').">")
 "    call Decho("edit-a-file: newdir<".newdir.">")
-    let dirname= s:NetrwTreeDir()
+    let dirname= s:NetrwTreeDir(a:islocal)
     if dirname =~ '/$'
      let dirname= dirname.newdir
     else
@@ -4562,7 +4563,7 @@ fun! s:NetrwBrowseChgDir(islocal,newdir,...)
    " NetrwBrowseChgDir: just go to the new directory spec {{{3
    " ----------------------------------------------------
 "   call Decho('goto-newdir: case "just go to new directory spec": newdir<'.newdir.'>')
-   let dirname    = newdir
+   let dirname = newdir
    keepj call s:SetRexDir(a:islocal,dirname)
    keepj call s:NetrwOptionRestore("s:")
 
@@ -4640,7 +4641,7 @@ fun! s:NetrwBrowseChgDir(islocal,newdir,...)
 "    call Decho("tree-list: clear buffer<".expand("%")."> with :%d")
     keepj %d
    endif
-   let treedir      = s:NetrwTreeDir()
+   let treedir      = s:NetrwTreeDir(a:islocal)
    let s:treecurpos = nbcd_curpos
    let haskey= 0
 "   call Decho("tree-list: w:netrw_treedict<".string(w:netrw_treedict).">")
@@ -4686,8 +4687,10 @@ fun! s:NetrwBrowseChgDir(islocal,newdir,...)
     " go down one directory
     let dirname= substitute(treedir,'/*$','/','')
 "    call Decho("tree-list: go down one dir: treedir<".treedir.">")
+"    call Decho("tree-list: ...            : dirname<".dirname.">")
    endif
    keepj call s:SetRexDir(a:islocal,dirname)
+"   call Decho("setting s:treeforceredraw to true")
    let s:treeforceredraw = 1
 
   else
@@ -7529,7 +7532,7 @@ fun! s:NetrwPrevWinOpen(islocal)
   let lastwinnr = winnr("$")
   let curword   = s:NetrwGetWord()
   let choice    = 0
-  let s:treedir = s:NetrwTreeDir()
+  let s:treedir = s:NetrwTreeDir(a:islocal)
   let curdir    = s:treedir
 "  call Decho("winnr($)#".lastwinnr." curword<".curword.">")
 
@@ -8126,7 +8129,7 @@ fun! s:NetrwSplit(mode)
    exe "keepj norm! ".netrw_hline."G0z\<CR>"
    exe "keepj norm! ".netrw_line."G0".netrw_col."\<bar>"
    let &ei= eikeep
-   let netrw_curdir= s:NetrwTreeDir()
+   let netrw_curdir= s:NetrwTreeDir(0)
 "   call Decho("tabnew")
    tabnew
    let b:netrw_curdir = netrw_curdir
@@ -8213,8 +8216,8 @@ endfun
 " ---------------------------------------------------------------------
 " s:NetrwTreeDir: determine tree directory given current cursor position {{{2
 " (full path directory with trailing slash returned)
-fun! s:NetrwTreeDir()
-"  call Dfunc("s:NetrwTreeDir() getline(".line(".").")"."<".getline('.')."> b:netrw_curdir<".b:netrw_curdir."> tab#".tabpagenr()." win#".winnr()." buf#".bufnr("%")."<".bufname("%")."> ft=".&ft)
+fun! s:NetrwTreeDir(islocal)
+"  call Dfunc("s:NetrwTreeDir(islocal=".a:islocal.") getline(".line(".").")"."<".getline('.')."> b:netrw_curdir<".b:netrw_curdir."> tab#".tabpagenr()." win#".winnr()." buf#".bufnr("%")."<".bufname("%")."> ft=".&ft)
 
   if exists("s:treedir")
    " s:NetrwPrevWinOpen opens a "previous" window -- and thus needs to and does call s:NetrwTreeDir early
@@ -8245,24 +8248,35 @@ fun! s:NetrwTreeDir()
    endif
 
    " detect user attempting to close treeroot
-"   call Decho("win#".winnr()." buf#".bufnr("%")."<".bufname("%").">")
-"   call Decho("getline(".line(".").")<".getline('.').'> '.((getline('.') =~ '^'.s:treedepthstring)? '=~' : '!~').' ^'.s:treedepthstring)
+"   call Decho("check if user is attempting to close treeroot")
+"   call Decho(".win#".winnr()." buf#".bufnr("%")."<".bufname("%").">")
+"   call Decho(".getline(".line(".").")<".getline('.').'> '.((getline('.') =~ '^'.s:treedepthstring)? '=~' : '!~').' ^'.s:treedepthstring)
    if getline('.') !~ '^'.s:treedepthstring && getline('.') != '..'
-"    call Decho("user may have attempted to close treeroot")
+"    call Decho(".user may have attempted to close treeroot")
     " now force a refresh
-"    call Decho("clear buffer<".expand("%")."> with :%d")
+"    call Decho(".force refresh: clear buffer<".expand("%")."> with :%d")
     sil! keepj %d
 "    call Dret("s:NetrwTreeDir <".treedir."> : (side effect) s:treecurpos<".string(s:treecurpos).">")
     return b:netrw_curdir
 "   else " Decho
-"    call Decho("user did not attempt to close treeroot")
+"    call Decho(".user did not attempt to close treeroot")
    endif
 
-   let treedir = s:NetrwTreePath(w:netrw_treetop)
+"   call Decho("islocal=".a:islocal." getline(.)<".getline('.').">")
+"   call Decho("after subst<".substitute(getline('.'),'^'.s:treedepthstring.'\+ \(.*\)$','\1','').">")
+   let potentialdir= substitute(getline('.'),'^'.s:treedepthstring.'* \(.*\)@$','\1','')
+   if a:islocal && getline(".") =~ '@$' && isdirectory(potentialdir)
+    let newdir  = w:netrw_treetop.'/'.potentialdir
+    let treedir = s:NetrwTreePath(newdir)
+"    call Decho("newdir <".newdir.">")
+   else
+    let treedir = s:NetrwTreePath(w:netrw_treetop)
+   endif
   endif
 
   " sanity maintenance: keep those //s away...
   let treedir= substitute(treedir,'//$','/','')
+"  call Decho("treedir<".treedir.">")
 
 "  call Dret("s:NetrwTreeDir <".treedir."> : (side effect) s:treecurpos<".string(s:treecurpos).">")
   return treedir
@@ -8475,8 +8489,8 @@ fun! s:NetrwWideListing()
    endif
    exe "sil! keepj ".w:netrw_bannercnt.',$s/\s\+$//e'
    keepj call histdel("/",-1)
-   exe "nmap <buffer> <silent> w	/^\\\\|\\s\\s\\zs\\S/\<cr>"
-   exe "nmap <buffer> <silent> b	?^\\\\|\\s\\s\\zs\\S?\<cr>"
+   exe "nno <buffer> <silent> w	/^\\\\|\\s\\s\\zs\\S/\<cr>"
+   exe "nno <buffer> <silent> b	?^\\\\|\\s\\s\\zs\\S?\<cr>"
 "   call Decho("NetrwWideListing) setl noma nomod ro")
    exe "setl ".g:netrw_bufsettings
 "   call Decho("(NetrwWideListing) ro=".&l:ro." ma=".&l:ma." mod=".&l:mod." wrap=".&l:wrap." (filename<".expand("%")."> win#".winnr()." ft<".&ft.">)")
