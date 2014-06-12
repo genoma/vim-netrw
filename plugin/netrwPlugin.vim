@@ -1,6 +1,6 @@
 " netrwPlugin.vim: Handles file transfer and remote directory listing across a network
 "            PLUGIN SECTION
-" Date:		May 26, 2014
+" Date:		Jun 10, 2014
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -20,7 +20,7 @@
 if &cp || exists("g:loaded_netrwPlugin")
  finish
 endif
-let g:loaded_netrwPlugin = "v153h"
+let g:loaded_netrwPlugin = "v153i"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** you need vim version 7.2 for this version of netrw"
@@ -92,7 +92,7 @@ if !exists("g:netrw_nogx") && maparg('gx','n') == ""
  if !hasmapto('<Plug>NetrwBrowseX')
   nmap <unique> gx <Plug>NetrwBrowseX
  endif
- nno <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand("<cfile>"),0)<cr>
+ nno <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),0)<cr>
 endif
 
 " ---------------------------------------------------------------------

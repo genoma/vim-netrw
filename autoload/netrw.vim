@@ -1,7 +1,7 @@
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Jun 05, 2014
-" Version:	153h	ASTRO-ONLY
+" Date:		Jun 11, 2014
+" Version:	153i	ASTRO-ONLY
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -29,7 +29,7 @@ if v:version < 704 || !has("patch213")
  let s:needpatch213= 1
  finish
 endif
-let g:loaded_netrw = "v153h"
+let g:loaded_netrw = "v153i"
 if !exists("s:NOTE")
  let s:NOTE    = 0
  let s:WARNING = 1
@@ -3387,6 +3387,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " s:NetrwBookHistRead: this function reads bookmarks and history {{{2
+"  Will source the history file (.netrwhist) only if the g:netrw_disthistmax is > 0.
 "                      Sister function: s:NetrwBookHistSave()
 fun! s:NetrwBookHistRead()
 "  call Dfunc("s:NetrwBookHistRead()")
@@ -3421,6 +3422,8 @@ endfun
 "                      Sister function: s:NetrwBookHistRead()
 "                      I used to do this via viminfo but that appears to
 "                      be unreliable for long-term storage
+"                      If g:netrw_dirhistmax is <= 0, no history or bookmarks
+"                      will be saved.
 fun! s:NetrwBookHistSave()
 "  call Dfunc("s:NetrwBookHistSave() dirhistmax=".g:netrw_dirhistmax)
   if !exists("g:netrw_dirhistmax") || g:netrw_dirhistmax <= 0
@@ -4799,6 +4802,10 @@ fun! netrw#NetrwBrowseX(fname,remote)
   let ykeep      = @@
   let screenposn = netrw#SavePosn()
 
+  " need to save and restore aw setting as gx can invoke this function from non-netrw buffers
+  let awkeep     = &aw
+  set noaw
+
   " special core dump handler
   if a:fname =~ '/core\(\.\d\+\)\=$'
    if exists("g:Netrw_corehandler")
@@ -4817,6 +4824,7 @@ fun! netrw#NetrwBrowseX(fname,remote)
     endif
     call netrw#RestorePosn(screenposn)
     let @@= ykeep
+    let &aw= awkeep
 "    call Dret("NetrwBrowseX : coredump handler invoked")
     return
    endif
@@ -5002,7 +5010,8 @@ fun! netrw#NetrwBrowseX(fname,remote)
 "   redraw!
   endif
   call netrw#RestorePosn(screenposn)
-  let @@= ykeep
+  let @@ = ykeep
+  let &aw= awkeep
 
 "  call Dret("NetrwBrowseX")
 endfun
@@ -6045,15 +6054,18 @@ endfun
 fun! s:NetrwCommands(islocal)
 "  call Dfunc("s:NetrwCommands(islocal=".a:islocal.")")
 
-  com! -nargs=* -complete=file -bang NetrwMB	call s:NetrwBookmark(<bang>0,<f-args>)
-  com! -nargs=*			     NetrwC	call s:NetrwSetChgwin(<q-args>)
+  com! -nargs=* -complete=file -bang	NetrwMB	call s:NetrwBookmark(<bang>0,<f-args>)
+  com! -nargs=*			    	NetrwC	call s:NetrwSetChgwin(<q-args>)
   com! Rexplore if exists("w:netrw_rexlocal")|call s:NetrwRexplore(w:netrw_rexlocal,exists("w:netrw_rexdir")? w:netrw_rexdir : ".")|else|call netrw#ErrorMsg(s:WARNING,"not a former netrw window",79)|endif
   if a:islocal
-   com! -buffer -nargs=+ -complete=file MF	call s:NetrwMarkFiles(1,<f-args>)
+   com! -buffer -nargs=+ -complete=file	MF	call s:NetrwMarkFiles(1,<f-args>)
   else
-   com! -buffer -nargs=+ -complete=file MF	call s:NetrwMarkFiles(0,<f-args>)
+   com! -buffer -nargs=+ -complete=file	MF	call s:NetrwMarkFiles(0,<f-args>)
   endif
-  com! -buffer -nargs=? -complete=file MT	call s:NetrwMarkTarget(<q-args>)
+  com! -buffer -nargs=? -complete=file	MT	call s:NetrwMarkTarget(<q-args>)
+  " the following two commands are intended to be used for testing only, so I'm not advertising them in the manual
+  com! -buffer -nargs=0			CRL	call netrw#LocalBrowseCheck(s:NetrwBrowseChgDir(1,s:NetrwGetWord()))
+  com! -buffer -nargs=0			CRR	call <SID>NetrwBrowse(0,<SID>NetrwBrowseChgDir(0,<SID>NetrwGetWord()))
 
 "  call Dret("s:NetrwCommands")
 endfun

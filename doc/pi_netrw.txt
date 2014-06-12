@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 05
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 11
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -1441,6 +1441,10 @@ appropriate application to use to "handle" these files.  Such things as
 OpenOffice (*.sfx), visualization (*.jpg, *.gif, etc), and PostScript (*.ps,
 *.eps) can be handled.
 
+Associated setting variables:
+	|g:netrw_gx|	control how gx picks up the text under the cursor
+	|g:netrw_nogx|	prevent gx map while editing
+
 							*netrw_filehandler*
 
 The "x" map applies a function to a file, based on its extension.  Of course,
@@ -2495,6 +2499,11 @@ your browsing preferences.  (see also: |netrw-settings|)
 				These characters in directory names are
 				escaped before applying glob()
 
+  *g:netrw_gx*			="<cfile>"
+ 				This option controls how gx (|netrw-gx|) picks
+				up the text under the cursor.  See |expand()|
+				for possibilities.
+
   *g:netrw_hide*		Controlled by the "a" map (see |netrw-a|)
 				=0 : show all
 				=1 : show not-hidden files
@@ -3322,6 +3331,13 @@ which is loaded automatically at startup (assuming :set nocp).
 				  caused problems with "b" and "w", which
 				  are mapped (for wide listings only) to
 				  skip over files rather than just words.
+		Jun 10, 2014	* |g:netrw_gx| introduced to allow users to
+				  override default "<cfile>" with the gx
+				  (|netrw-gx|) map
+		Jun 11, 2014	* gx (|netrw-gx|), with |'autowrite'| set,
+				  will write modified files.  s:NetrwBrowseX()
+				  will now save, turn off, and restore the
+				  |'autowrite'| setting.
 	v152:	Apr 08, 2014	* uses the |'noswapfile'| option (requires {{{2
 				  vim 7.4 with patch 213)
 				* (Enno Nagel) turn |'rnu'| off in netrw
