@@ -1,7 +1,7 @@
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Jun 11, 2014
-" Version:	153i	ASTRO-ONLY
+" Date:		Jun 13, 2014
+" Version:	153j	ASTRO-ONLY
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -29,7 +29,7 @@ if v:version < 704 || !has("patch213")
  let s:needpatch213= 1
  finish
 endif
-let g:loaded_netrw = "v153i"
+let g:loaded_netrw = "v153j"
 if !exists("s:NOTE")
  let s:NOTE    = 0
  let s:WARNING = 1
@@ -5017,6 +5017,31 @@ fun! netrw#NetrwBrowseX(fname,remote)
 endfun
 
 " ---------------------------------------------------------------------
+" netrw#NetrwBrowseXVis: used by gx in visual mode to select a file for browsing {{{2
+fun! netrw#NetrwBrowseXVis()
+"  call Dfunc("netrw#NetrwBrowseXVis()")
+  let atkeep = @@
+  norm! gvy
+"  call Decho("@@<".@@.">")
+  call netrw#NetrwBrowseX(@@,netrw#CheckIfRemote())
+  let @@     = atkeep
+"  call Dret("netrw#NetrwBrowseXVis")
+endfun
+
+" ---------------------------------------------------------------------
+" netrw#CheckIfRemote: returns 1 if current file looks like an url, 0 else {{{2
+fun! netrw#CheckIfRemote()
+"  call Dfunc("netrw#CheckIfRemote()")
+  if expand("%") =~ '^\a\+://'
+"   call Dret("netrw#CheckIfRemote 1")
+   return 1
+  else
+"   call Dret("netrw#CheckIfRemote 0")
+   return 0
+  endif
+endfun
+
+" ---------------------------------------------------------------------
 " s:NetrwChgPerm: (implements "gp") change file permission {{{2
 fun! s:NetrwChgPerm(islocal,curdir)
 "  call Dfunc("s:NetrwChgPerm(islocal=".a:islocal." curdir<".a:curdir.">)")
@@ -9811,7 +9836,7 @@ fun! s:NetrwLocalExecute(cmd)
 endfun
 
 " ---------------------------------------------------------------------
-" s:NetrwLocalRename: rename a remote file or directory {{{2
+" s:NetrwLocalRename: rename a local file or directory {{{2
 fun! s:NetrwLocalRename(path) range
 "  call Dfunc("NetrwLocalRename(path<".a:path.">)")
 

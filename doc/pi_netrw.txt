@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 11
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 13
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -57,7 +57,7 @@ Copyright: Copyright (C) 1999-2014 Charles E Campbell    *netrw-copyright*
       Changing To A Bookmarked Directory..................|netrw-gb|
       Changing To A Predecessor Directory.................|netrw-u|
       Changing To A Successor Directory...................|netrw-U|
-      Customizing Browsing With A User Function...........|netrw-x|
+      Customizing Browsing With A Special Handler.........|netrw-x|
       Deleting Bookmarks..................................|netrw-mB|
       Deleting Files Or Directories.......................|netrw-D|
       Directory Exploring Commands........................|netrw-explore|
@@ -1128,7 +1128,7 @@ QUICK REFERENCE: COMMANDS	*netrw-explore-cmds* *netrw-browse-cmds* {{{2
 
 BOOKMARKING A DIRECTORY *netrw-mb* *netrw-bookmark* *netrw-bookmarks* {{{2
 
-One may easily "bookmark" the currently browsed irectory by using >
+One may easily "bookmark" the currently browsed directory by using >
 
 	mb
 <
@@ -1407,11 +1407,11 @@ that the removal is in fact what you want to do.  If netrw doesn't have
 permission to remove a file, it will issue an error message.
 
 						*netrw-gx*
-CUSTOMIZING BROWSING WITH A USER FUNCTION	*netrw-x* *netrw-handler* {{{2
+CUSTOMIZING BROWSING WITH A SPECIAL HANDLER	*netrw-x* *netrw-handler* {{{2
 						(also see |netrw_filehandler|)
 
 Certain files, such as html, gif, jpeg, (word/office) doc, etc, files, are
-best seen with a special handler (ie. a tool provided with your computer).
+best seen with a special handler (ie. a tool provided with your computer o/s).
 Netrw allows one to invoke such special handlers by: >
 
 	* when Exploring, hit the "x" key
@@ -1440,6 +1440,13 @@ The file's suffix is used by these various approaches to determine an
 appropriate application to use to "handle" these files.  Such things as
 OpenOffice (*.sfx), visualization (*.jpg, *.gif, etc), and PostScript (*.ps,
 *.eps) can be handled.
+
+The gx mapping extends to all buffers; apply "gx" while atop a word and netrw
+will apply a special handler to it (like "x" works when in a netrw buffer).
+One may also use visual mode (see |visual-start|) to select the text that
+the special handler will use.  Normally gx uses expand("<cfile>") to pick
+up the text under the cursor; one may change what |expand()| uses via the
+|g:netrw_gx| variable.
 
 Associated setting variables:
 	|g:netrw_gx|	control how gx picks up the text under the cursor
@@ -2897,6 +2904,16 @@ If there are marked files:  (see |netrw-mf|)
     Marked files will be renamed (moved).  You will be queried as above in
     order to specify where you want the file/directory to be moved.
 
+    If you answer a renaming query with a "s/frompattern/topattern/", then
+    subsequent files on the marked file list will be renamed by taking each
+    name, applying that substitute, and renaming each file to the result.
+    As an example : >
+
+    	mr  [query: reply with *.c]
+	R   [query: reply with s/^\(.*\)\.c$/\1.C/]
+<
+    This operation will mark all *.c files and rename them to *.C.
+
     WARNING:~
 
     Note that moving files is a dangerous operation; copies are safer.  That's
@@ -3338,6 +3355,7 @@ which is loaded automatically at startup (assuming :set nocp).
 				  will write modified files.  s:NetrwBrowseX()
 				  will now save, turn off, and restore the
 				  |'autowrite'| setting.
+		Jun 13, 2014	* added visual map for gx use
 	v152:	Apr 08, 2014	* uses the |'noswapfile'| option (requires {{{2
 				  vim 7.4 with patch 213)
 				* (Enno Nagel) turn |'rnu'| off in netrw

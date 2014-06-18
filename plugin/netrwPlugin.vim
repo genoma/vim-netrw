@@ -20,7 +20,7 @@
 if &cp || exists("g:loaded_netrwPlugin")
  finish
 endif
-let g:loaded_netrwPlugin = "v153i"
+let g:loaded_netrwPlugin = "v153j"
 if v:version < 702
  echohl WarningMsg
  echo "***warning*** you need vim version 7.2 for this version of netrw"
@@ -88,11 +88,19 @@ com! -nargs=0	NetrwSettings	call netrwSettings#NetrwSettings()
 com! -bang	NetrwClean	call netrw#Clean(<bang>0)
 
 " Maps:
-if !exists("g:netrw_nogx") && maparg('gx','n') == ""
- if !hasmapto('<Plug>NetrwBrowseX')
-  nmap <unique> gx <Plug>NetrwBrowseX
+if !exists("g:netrw_nogx")
+ if maparg('gx','n') == ""
+  if !hasmapto('<Plug>NetrwBrowseX')
+   nmap <unique> gx <Plug>NetrwBrowseX
+  endif
+  nno <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())<cr>
  endif
- nno <silent> <Plug>NetrwBrowseX :call netrw#NetrwBrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),0)<cr>
+ if maparg('gx','v') == ""
+  if !hasmapto('<Plug>NetrwBrowseXVis')
+   vmap <unique> gx <Plug>NetrwBrowseXVis
+  endif
+  vno <silent> <Plug>NetrwBrowseXVis :<c-u>call netrw#NetrwBrowseXVis()<cr>
+ endif
 endif
 
 " ---------------------------------------------------------------------
