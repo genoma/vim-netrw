@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 13
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 15
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -2910,9 +2910,10 @@ If there are marked files:  (see |netrw-mf|)
     As an example : >
 
     	mr  [query: reply with *.c]
-	R   [query: reply with s/^\(.*\)\.c$/\1.C/]
+	R   [query: reply with s/^\(.*\)\.c$/\1.cpp/]
 <
-    This operation will mark all *.c files and rename them to *.C.
+    This example will mark all *.c files and then rename them to *.cpp
+    files.
 
     WARNING:~
 
@@ -3259,6 +3260,27 @@ Associated setting variables:	|g:netrw_chgwin|
 	     directory.  Start if from your $HOME or another writable
 	     directory.
 
+								*netrw-p17*
+	P17. Netrw is closing buffers on its own.
+	     What steps will reproduce the problem?
+		1. :Explore, navigate directories, open a file
+		2. :Explore, open another file
+		3. Buffer opened in step 1 will be closed. o
+	    What is the expected output? What do you see instead?
+		I expect both buffers to exist, but only the last one does.
+
+	   (Lance) Problem is caused by "set autochdir" in .vimrc.
+	   (drchip) I am able to duplicate this problem with |'acd'| set.
+	            It appears that the buffers are not exactly closed;
+		    a ":ls!" will show them (although ":ls" does not).
+
+								*netrw-P18*
+	P18. How to locally edit a file that's only available via
+	     another server accessible via ssh?
+	     See http://stackoverflow.com/questions/12469645/
+	     "Using Vim to Remotely Edit A File on ServerB Only
+	      Accessible From ServerA"
+
 ==============================================================================
 11. Debugging Netrw Itself				*netrw-debug* {{{1
 
@@ -3356,6 +3378,9 @@ which is loaded automatically at startup (assuming :set nocp).
 				  will now save, turn off, and restore the
 				  |'autowrite'| setting.
 		Jun 13, 2014	* added visual map for gx use
+		Jun 15, 2014	* (Enno Nagel) reported that with having hls
+				  set and wide listing style in use, that the
+				  b and w maps caused unwanted highlighting.
 	v152:	Apr 08, 2014	* uses the |'noswapfile'| option (requires {{{2
 				  vim 7.4 with patch 213)
 				* (Enno Nagel) turn |'rnu'| off in netrw
