@@ -1,7 +1,7 @@
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Jun 15, 2014
-" Version:	153k	ASTRO-ONLY
+" Date:		Jul 05, 2014
+" Version:	153l	ASTRO-ONLY
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -29,7 +29,7 @@ if v:version < 704 || !has("patch213")
  let s:needpatch213= 1
  finish
 endif
-let g:loaded_netrw = "v153k"
+let g:loaded_netrw = "v153l"
 if !exists("s:NOTE")
  let s:NOTE    = 0
  let s:WARNING = 1
@@ -5787,8 +5787,9 @@ fun! s:NetrwMaps(islocal)
    nnoremap <buffer> <silent> mt	:<c-u>call <SID>NetrwMarkFileTgt(1)<cr>
    nnoremap <buffer> <silent> mT	:<c-u>call <SID>NetrwMarkFileTag(1)<cr>
    nnoremap <buffer> <silent> mu	:<c-u>call <SID>NetrwUnMarkFile(1)<cr>
-   nnoremap <buffer> <silent> mx	:<c-u>call <SID>NetrwMarkFileExe(1)<cr>
-   nnoremap <buffer> <silent> mX	:<c-u>call <SID>NetrwMarkFileVimCmd(1)<cr>
+   nnoremap <buffer> <silent> mv	:<c-u>call <SID>NetrwMarkFileVimCmd(1)<cr>
+   nnoremap <buffer> <silent> mx	:<c-u>call <SID>NetrwMarkFileExe(1,0)<cr>
+   nnoremap <buffer> <silent> mX	:<c-u>call <SID>NetrwMarkFileExe(1,1)<cr>
    nnoremap <buffer> <silent> mz	:<c-u>call <SID>NetrwMarkFileCompress(1)<cr>
    nnoremap <buffer> <silent> O		:call <SID>NetrwObtain(1)<cr>
    nnoremap <buffer> <silent> o		:call <SID>NetrwSplit(3)<cr>
@@ -5838,8 +5839,9 @@ fun! s:NetrwMaps(islocal)
    inoremap <buffer> <silent> mT	<c-o>:<c-u>call <SID>NetrwMarkFileTag(1)<cr>
    inoremap <buffer> <silent> mt	<c-o>:<c-u>call <SID>NetrwMarkFileTgt(1)<cr>
    inoremap <buffer> <silent> mu	<c-o>:<c-u>call <SID>NetrwUnMarkFile(1)<cr>
-   inoremap <buffer> <silent> mx	<c-o>:<c-u>call <SID>NetrwMarkFileExe(1)<cr>
-   inoremap <buffer> <silent> mX	<c-o>:<c-u>call <SID>NetrwMarkFileVimCmd(1)<cr>
+   inoremap <buffer> <silent> mv	<c-o>:<c-u>call <SID>NetrwMarkFileVimCmd(1)<cr>
+   inoremap <buffer> <silent> mx	<c-o>:<c-u>call <SID>NetrwMarkFileExe(1,0)<cr>
+   inoremap <buffer> <silent> mX	<c-o>:<c-u>call <SID>NetrwMarkFileExe(1,1)<cr>
    inoremap <buffer> <silent> mz	<c-o>:<c-u>call <SID>NetrwMarkFileCompress(1)<cr>
    inoremap <buffer> <silent> O		<c-o>:call <SID>NetrwObtain(1)<cr>
    inoremap <buffer> <silent> o		<c-o>:call <SID>NetrwSplit(3)<cr>
@@ -5936,8 +5938,9 @@ fun! s:NetrwMaps(islocal)
    nnoremap <buffer> <silent> mt	:<c-u>call <SID>NetrwMarkFileTgt(0)<cr>
    nnoremap <buffer> <silent> mT	:<c-u>call <SID>NetrwMarkFileTag(0)<cr>
    nnoremap <buffer> <silent> mu	:<c-u>call <SID>NetrwUnMarkFile(0)<cr>
-   nnoremap <buffer> <silent> mx	:<c-u>call <SID>NetrwMarkFileExe(0)<cr>
-   nnoremap <buffer> <silent> mX	:<c-u>call <SID>NetrwMarkFileVimCmd(0)<cr>
+   nnoremap <buffer> <silent> mv	:<c-u>call <SID>NetrwMarkFileVimCmd(0)<cr>
+   nnoremap <buffer> <silent> mx	:<c-u>call <SID>NetrwMarkFileExe(0,0)<cr>
+   nnoremap <buffer> <silent> mX	:<c-u>call <SID>NetrwMarkFileExe(0,1)<cr>
    nnoremap <buffer> <silent> mz	:<c-u>call <SID>NetrwMarkFileCompress(0)<cr>
    nnoremap <buffer> <silent> gb	:<c-u>call <SID>NetrwBookHistHandler(1,b:netrw_curdir)<cr>
    nnoremap <buffer> <silent> gd	:<c-u>call <SID>NetrwForceChgDir(0,<SID>NetrwGetWord())<cr>
@@ -5986,8 +5989,10 @@ fun! s:NetrwMaps(islocal)
    inoremap <buffer> <silent> mt	<c-o>:<c-u>call <SID>NetrwMarkFileTgt(0)<cr>
    inoremap <buffer> <silent> mT	<c-o>:<c-u>call <SID>NetrwMarkFileTag(0)<cr>
    inoremap <buffer> <silent> mu	<c-o>:<c-u>call <SID>NetrwUnMarkFile(0)<cr>
-   inoremap <buffer> <silent> mx	<c-o>:<c-u>call <SID>NetrwMarkFileExe(0)<cr>
-   inoremap <buffer> <silent> mX	<c-o>:<c-u>call <SID>NetrwMarkFileVimCmd(0)<cr>
+   nnoremap <buffer> <silent> mv	:<c-u>call <SID>NetrwMarkFileVimCmd(1)<cr>
+   inoremap <buffer> <silent> mx	<c-o>:<c-u>call <SID>NetrwMarkFileExe(0,0)<cr>
+   inoremap <buffer> <silent> mX	<c-o>:<c-u>call <SID>NetrwMarkFileExe(0,1)<cr>
+   inoremap <buffer> <silent> mv	<c-o>:<c-u>call <SID>NetrwMarkFileVimCmd(0)<cr>
    inoremap <buffer> <silent> mz	<c-o>:<c-u>call <SID>NetrwMarkFileCompress(0)<cr>
    inoremap <buffer> <silent> gb	<c-o>:<c-u>call <SID>NetrwBookHistHandler(1,b:netrw_curdir)<cr>
    inoremap <buffer> <silent> gh	<c-o>:<c-u>call <SID>NetrwHidden(0)<cr>
@@ -6617,62 +6622,65 @@ fun! s:NetrwMarkFileQFEL(islocal,qfel)
 endfun
 
 " ---------------------------------------------------------------------
-" s:NetrwMarkFileExe: (invoked by mx) execute arbitrary system command on marked files, one at a time {{{2
-"                     Uses the local marked-file list.
-fun! s:NetrwMarkFileExe(islocal)
-"  call Dfunc("s:NetrwMarkFileExe(islocal=".a:islocal.")")
+" s:NetrwMarkFileExe: (invoked by mx and mX) execute arbitrary system command on marked files {{{2
+"                     mx enbloc=0: Uses the local marked-file list, applies command to each file individually
+"                     mX enbloc=1: Uses the global marked-file list, applies command to entire list
+fun! s:NetrwMarkFileExe(islocal,enbloc)
+"  call Dfunc("s:NetrwMarkFileExe(islocal=".a:islocal.",enbloc=".a:enbloc.")")
   let svpos    = netrw#SavePosn()
   let curdir   = b:netrw_curdir
   let curbufnr = bufnr("%")
 
-  " sanity check
-  if !exists("s:netrwmarkfilelist_{curbufnr}") || empty(s:netrwmarkfilelist_{curbufnr})
-   keepj call netrw#ErrorMsg(2,"there are no marked files in this window (:help netrw-mf)",66)
-"   call Dret("s:NetrwMarkFileExe")
-   return
-  endif
-"  call Decho("sanity chk passed: s:netrwmarkfilelist_".curbufnr."<".string(s:netrwmarkfilelist_{curbufnr}))
+  if a:enbloc == 0
+   " individually apply command to files, one at a time
+    " sanity check
+    if !exists("s:netrwmarkfilelist_{curbufnr}") || empty(s:netrwmarkfilelist_{curbufnr})
+     keepj call netrw#ErrorMsg(2,"there are no marked files in this window (:help netrw-mf)",66)
+"     call Dret("s:NetrwMarkFileExe")
+     return
+    endif
+"    call Decho("sanity chk passed: s:netrwmarkfilelist_".curbufnr."<".string(s:netrwmarkfilelist_{curbufnr}))
 
-  if exists("s:netrwmarkfilelist_{curbufnr}")
-   " get the command
-   call inputsave()
-   let cmd= input("Enter command: ","","file")
-   call inputrestore()
-"   call Decho("cmd<".cmd.">")
-   if cmd == ""
-"    "   call Dret("s:NetrwMarkFileExe : early exit, empty command")
-    return
-   endif
-
-   " apply command to marked files.  Substitute: filename -> %
-   " If no %, then append a space and the filename to the command
-   for fname in s:netrwmarkfilelist_{curbufnr}
-    if a:islocal
-     if g:netrw_keepdir
-      let fname= shellescape(netrw#WinPath(s:ComposePath(curdir,fname)))
+    if exists("s:netrwmarkfilelist_{curbufnr}")
+     " get the command
+     call inputsave()
+     let cmd= input("Enter command: ","","file")
+     call inputrestore()
+"     call Decho("cmd<".cmd.">")
+     if cmd == ""
+"      call Dret("s:NetrwMarkFileExe : early exit, empty command")
+      return
      endif
-    else
-     let fname= shellescape(netrw#WinPath(b:netrw_curdir.fname))
-    endif
-    if cmd =~ '%'
-     let xcmd= substitute(cmd,'%',fname,'g')
-    else
-     let xcmd= cmd.' '.fname
-    endif
-    if a:islocal
-"     call Decho("local: xcmd<".xcmd.">")
-     let ret= system(xcmd)
-    else
-"     call Decho("remote: xcmd<".xcmd.">")
-     let ret= s:RemoteSystem(xcmd)
-    endif
-    if v:shell_error < 0
-     keepj call netrw#ErrorMsg(s:ERROR,"command<".xcmd."> failed, aborting",54)
-     break
-    else
-     echo ret
-    endif
-   endfor
+
+     " apply command to marked files, individually.  Substitute: filename -> %
+     " If no %, then append a space and the filename to the command
+     for fname in s:netrwmarkfilelist_{curbufnr}
+      if a:islocal
+       if g:netrw_keepdir
+	let fname= shellescape(netrw#WinPath(s:ComposePath(curdir,fname)))
+       endif
+      else
+       let fname= shellescape(netrw#WinPath(b:netrw_curdir.fname))
+      endif
+      if cmd =~ '%'
+       let xcmd= substitute(cmd,'%',fname,'g')
+      else
+       let xcmd= cmd.' '.fname
+      endif
+      if a:islocal
+"       call Decho("local: xcmd<".xcmd.">")
+       let ret= system(xcmd)
+      else
+"       call Decho("remote: xcmd<".xcmd.">")
+       let ret= s:RemoteSystem(xcmd)
+      endif
+      if v:shell_error < 0
+       keepj call netrw#ErrorMsg(s:ERROR,"command<".xcmd."> failed, aborting",54)
+       break
+      else
+       echo ret
+      endif
+     endfor
 
    " unmark marked file list
    call s:NetrwUnmarkList(curbufnr,curdir)
@@ -6683,6 +6691,37 @@ fun! s:NetrwMarkFileExe(islocal)
   else
    keepj call netrw#ErrorMsg(s:ERROR,"no files marked!",59)
   endif
+
+ else " apply command to global list of files, en bloc
+
+  call inputsave()
+  let cmd= input("Enter command: ","","file")
+  call inputrestore()
+"  call Decho("cmd<".cmd.">")
+  if cmd == ""
+"   call Dret("s:NetrwMarkFileExe : early exit, empty command")
+   return
+  endif
+  if cmd =~ '%'
+   let cmd= substitute(cmd,'%',join(map(s:netrwmarkfilelist,'shellescape(v:val)'),' '),'g')
+  else
+   let cmd= cmd.' '.join(map(s:netrwmarkfilelist,'shellescape(v:val)'),' ')
+  endif
+  if a:islocal
+   call system(cmd)
+   if v:shell_error < 0
+    keepj call netrw#ErrorMsg(s:ERROR,"command<".xcmd."> failed, aborting",54)
+   endif
+  else
+   let ret= s:RemoteSystem(cmd)
+  endif
+  call s:NetrwUnmarkAll()
+
+  " refresh the listing
+  keepj call s:NetrwRefresh(a:islocal,s:NetrwBrowseChgDir(a:islocal,'./'))
+  keepj call netrw#RestorePosn(svpos)
+
+ endif
   
 "  call Dret("s:NetrwMarkFileExe")
 endfun
@@ -6745,7 +6784,7 @@ fun! s:NetrwMarkHideSfx(islocal)
 endfun
 
 " ---------------------------------------------------------------------
-" s:NetrwMarkFileVimCmd: (invoked by mX) execute arbitrary vim command on marked files, one at a time {{{2
+" s:NetrwMarkFileVimCmd: (invoked by mv) execute arbitrary vim command on marked files, one at a time {{{2
 "                     Uses the local marked-file list.
 fun! s:NetrwMarkFileVimCmd(islocal)
 "  call Dfunc("s:NetrwMarkFileVimCmd(islocal=".a:islocal.")")
@@ -6784,7 +6823,7 @@ fun! s:NetrwMarkFileVimCmd(islocal)
      exe "sil! keepalt wq!"
     else
 "     call Decho("remote<".fname.">: exe ".cmd." : NOT SUPPORTED YET")
-     echo "sorry, \"mX\" not supported yet for remote files"
+     echo "sorry, \"mv\" not supported yet for remote files"
     endif
    endfor
 

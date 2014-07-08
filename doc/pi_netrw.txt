@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jun 15
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jul 05
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -76,7 +76,9 @@ Copyright: Copyright (C) 1999-2014 Charles E Campbell    *netrw-copyright*
       Unmarking Files.....................................|netrw-mF|
       Marking Files By QuickFix List......................|netrw-qF|
       Marking Files By Regular Expression.................|netrw-mr|
-      Marked Files: Arbitrary Command.....................|netrw-mx|
+      Marked Files: Arbitrary Shell Command...............|netrw-mx|
+      Marked Files: Arbitrary Shell Command, En Bloc......|netrw-mX|
+      Marked Files: Arbitrary Vim Command.................|netrw-mv|
       Marked Files: Compression And Decompression.........|netrw-mz|
       Marked Files: Copying...............................|netrw-mc|
       Marked Files: Diff..................................|netrw-md|
@@ -1068,7 +1070,9 @@ QUICK REFERENCE: MAPS				*netrw-browse-maps* {{{2
 	   mt	Current browsing directory becomes markfile target   |netrw-mt|
 	   mT	Apply ctags to marked files                          |netrw-mT|
 	   mu	Unmark all marked files                              |netrw-mu|
+	   mv	Apply arbitrary vim   command to marked files        |netrw-mv|
 	   mx	Apply arbitrary shell command to marked files        |netrw-mx|
+	   mX	Apply arbitrary shell command to marked files en bloc|netrw-mX|
 	   mz	Compress/decompress marked files                     |netrw-mz|
 	   o	Enter the file/directory under the cursor in a new   |netrw-o|
 	    	browser window.  A horizontal split is used.
@@ -2029,7 +2033,9 @@ The following netrw maps make use of marked files:
     |netrw-mp|	Print marked files
     |netrw-mt|	Set target for |netrw-mm| and |netrw-mc|
     |netrw-mT|	Generate tags using marked files
+    |netrw-mv|	Apply vim command to marked files
     |netrw-mx|	Apply shell command to marked files
+    |netrw-mX|	Apply shell command to marked files, en bloc
     |netrw-mz|	Compress/Decompress marked files
     |netrw-O|	Obtain marked files
     |netrw-R|	Rename marked files
@@ -2053,13 +2059,13 @@ If the mouse is enabled and works with your vim, you may use <s-leftmouse> to
 mark one or more files.  You may mark multiple files by dragging the shifted
 leftmouse.  (see |netrw-mouse|)
 
-*markfilelist* *global_markfilelist* *local_markfilelist*
+			*markfilelist* *global_markfilelist* *local_markfilelist*
 All marked files are entered onto the global marked file list; there is only
-one such list.  In addition, every netrw buffer also has its own local marked
-file list; since netrw buffers are associated with specific directories, this
-means that each directory has its own local marked file list.  The various
-commands which operate on marked files use one or the other of the marked file
-lists.
+one such list.  In addition, every netrw buffer also has its own buffer-local
+marked file list; since netrw buffers are associated with specific
+directories, this means that each directory has its own local marked file
+list.  The various commands which operate on marked files use one or the other
+of the marked file lists.
 
 Known Problem: if one is using tree mode (|g:netrw_liststyle|) and several
 directories have files with the same name,  then marking such a file will
@@ -2095,7 +2101,20 @@ future I may make it possible to use |regexp|s instead of glob()-style
 expressions (yet-another-option).
 
 
-MARKED FILES: ARBITRARY COMMAND				*netrw-mx* {{{2
+MARKED FILES, ARBITRARY VIM COMMAND				*netrw-mv*  {{{2
+	    (See |netrw-mf| and |netrw-mr| for how to mark files)
+		      (uses the local marked-file list)
+
+The "mv" map causes netrw execute an arbitrary vim command on each file
+on the local marked file list, individually:
+
+	* 1split
+	* sil! keepalt e file
+	* run vim command
+	* sil! keepalt wq!
+
+
+MARKED FILES, ARBITRARY SHELL COMMAND				*netrw-mx* {{{2
 	    (See |netrw-mf| and |netrw-mr| for how to mark files)
 		      (uses the local marked-file list)
 
@@ -2103,6 +2122,37 @@ Upon activation of the "mx" map, netrw will query the user for some (external)
 command to be applied to all marked files.  All "%"s in the command will be
 substituted with the name of each marked file in turn.  If no "%"s are in the
 command, then the command will be followed by a space and a marked filename.
+
+Example:
+	(mark files)
+	mx
+	Enter command: cat
+
+	The result is a series of shell commands:
+	cat 'file1'
+	cat 'file2'
+	...
+
+
+MARKED FILES, ARBITRARY SHELL COMMAND, EN BLOC 			*netrw-mX* {{{2
+	    (See |netrw-mf| and |netrw-mr| for how to mark files)
+		      (uses the global marked-file list)
+
+Upon activation of the 'mX' map, netrw will query the user for some (external)
+command to be applied to all marked files on the global marked file list.  The
+"en bloc" means that one command will be executed on all the files at once: >
+
+	command files
+
+It is useful, for example, to select files and make a tarball:
+
+	(mark files)
+	mX
+	Enter command: tar cf mynewtarball.tar
+
+The command that will be run in this example:
+
+	tar cf mynewtarball.tar 'file1' 'file2' ...
 
 
 MARKED FILES: COMPRESSION AND DECOMPRESSION		*netrw-mz* {{{2
@@ -3381,6 +3431,7 @@ which is loaded automatically at startup (assuming :set nocp).
 		Jun 15, 2014	* (Enno Nagel) reported that with having hls
 				  set and wide listing style in use, that the
 				  b and w maps caused unwanted highlighting.
+I		Jul 05, 2014	* |netrw-mv| and |netrw-mX| commands included
 	v152:	Apr 08, 2014	* uses the |'noswapfile'| option (requires {{{2
 				  vim 7.4 with patch 213)
 				* (Enno Nagel) turn |'rnu'| off in netrw
