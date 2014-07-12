@@ -66,6 +66,7 @@ g:netrw_http_put_cmd	pi_netrw.txt	/*g:netrw_http_put_cmd*
 g:netrw_http_xcmd	pi_netrw.txt	/*g:netrw_http_xcmd*
 g:netrw_ignorenetrc	pi_netrw.txt	/*g:netrw_ignorenetrc*
 g:netrw_keepdir	pi_netrw.txt	/*g:netrw_keepdir*
+g:netrw_keepj	pi_netrw.txt	/*g:netrw_keepj*
 g:netrw_list_cmd	pi_netrw.txt	/*g:netrw_list_cmd*
 g:netrw_list_hide	pi_netrw.txt	/*g:netrw_list_hide*
 g:netrw_liststyle	pi_netrw.txt	/*g:netrw_liststyle*

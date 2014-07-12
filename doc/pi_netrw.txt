@@ -1,4 +1,4 @@
-*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jul 05
+*pi_netrw.txt*  For Vim version 7.4.  Last change: 2014 Jul 09
 
 	    ------------------------------------------------
 	    NETRW REFERENCE MANUAL    by Charles E. Campbell
@@ -1842,18 +1842,19 @@ Associated topics: |netrw-a| |netrw-ctrl-h| |netrw-mh|
 Netrw provides a helper function 'netrw_gitignore#Hide()' that, when used with
 |g:netrw_list_hide| automatically hides all git-ignored files.
 
-'netrw_gitignore#Hide' searches for patterns in the following files:
+'netrw_gitignore#Hide' searches for patterns in the following files: >
+
 	'./.gitignore'
 	'./.git/info/exclude'
 	global gitignore file: `git config --global core.excludesfile`
 	system gitignore file: `git config --system core.excludesfile`
-
+<
 Files that do not exist, are ignored.
 Git-ignore patterns are taken from existing files, and converted to patterns for
 hiding files. For example, if you had '*.log' in your '.gitignore' file, it
 would be converted to '.*\.log'.
 
-To use this function, simply assign its output to |g:netrw_list_hide| option.
+To use this function, simply assign its output to |g:netrw_list_hide| option.  >
 
 	Example: let g:netrw_list_hide= netrw_gitignore#Hide()
 		Git-ignored files are hidden in Netrw.
@@ -1863,7 +1864,7 @@ To use this function, simply assign its output to |g:netrw_list_hide| option.
 
 	Example: g:netrw_list_hide= netrw_gitignore#Hide() . '.*\.swp$'
 		Combining 'netrw_gitignore#Hide' with custom patterns.
-
+<
 
 IMPROVING BROWSING			*netrw-listhack* *netrw-ssh-hack* {{{2
 
@@ -2579,6 +2580,12 @@ your browsing preferences.  (see also: |netrw-settings|)
 				   browsing directory.
 				The current browsing directory is contained in
 				b:netrw_curdir (also see |netrw-c|)
+
+  *g:netrw_keepj*		="keepj" (default) netrw attempts to keep the
+				         |:jumps| table unaffected.
+				=""      netrw will not use |:keepjumps| with
+					 exceptions only for the
+					 saving/restoration of position.
 
   *g:netrw_list_cmd*		command for listing remote directories
 				 default: (if ssh is executable)
@@ -3431,7 +3438,9 @@ which is loaded automatically at startup (assuming :set nocp).
 		Jun 15, 2014	* (Enno Nagel) reported that with having hls
 				  set and wide listing style in use, that the
 				  b and w maps caused unwanted highlighting.
-I		Jul 05, 2014	* |netrw-mv| and |netrw-mX| commands included
+		Jul 05, 2014	* |netrw-mv| and |netrw-mX| commands included
+		Jul 09, 2014	* |g:netrw_keepj| included, allowing optional
+				  keepj
 	v152:	Apr 08, 2014	* uses the |'noswapfile'| option (requires {{{2
 				  vim 7.4 with patch 213)
 				* (Enno Nagel) turn |'rnu'| off in netrw
