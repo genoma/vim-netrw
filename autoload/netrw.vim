@@ -1,7 +1,7 @@
 " netrw.vim: Handles file transfer and remote directory listing across
 "            AUTOLOAD SECTION
-" Date:		Jul 09, 2014
-" Version:	153m	ASTRO-ONLY
+" Date:		Jul 16, 2014
+" Version:	153n	ASTRO-ONLY
 " Maintainer:	Charles E Campbell <NdrOchip@ScampbellPfamily.AbizM-NOSPAM>
 " GetLatestVimScripts: 1075 1 :AutoInstall: netrw.vim
 " Copyright:    Copyright (C) 1999-2013 Charles E. Campbell {{{1
@@ -29,7 +29,7 @@ if v:version < 704 || !has("patch213")
  let s:needpatch213= 1
  finish
 endif
-let g:loaded_netrw = "v153m"
+let g:loaded_netrw = "v153n"
 if !exists("s:NOTE")
  let s:NOTE    = 0
  let s:WARNING = 1
@@ -127,7 +127,7 @@ fun! netrw#ErrorMsg(level,msg,errnum)
 endfun
 
 " ---------------------------------------------------------------------
-" NetrwInit: initializes variables if they haven't been defined {{{2
+" s:NetrwInit: initializes variables if they haven't been defined {{{2
 "            Loosely,  varname = value.
 fun s:NetrwInit(varname,value)
 " call Decho("varname<".a:varname."> value=".a:value)
@@ -418,7 +418,7 @@ let s:QuickHelp= ["-:go up dir  D:delete  R:rename  s:sort-by  x:special",
    \              "-targets-  mt:target Tb:use bookmark  Th:use history"]
 " g:netrw_sepchr: picking a character that doesn't appear in filenames that can be used to separate priority from filename
 call s:NetrwInit("g:netrw_sepchr"        , (&enc == "euc-jp")? "\<Char-0x01>" : "\<Char-0xff>")
-if g:netrw_keepj =! "keepj"
+if !exists("g:netrw_keepj") || g:netrw_keepj == "keepj"
  call s:NetrwInit("s:netrw_silentxfer"    , (exists("g:netrw_silent") && g:netrw_silent != 0)? "sil keepj " : "keepj ")
 else
  call s:NetrwInit("s:netrw_silentxfer"    , (exists("g:netrw_silent") && g:netrw_silent != 0)? "sil " : " ")
